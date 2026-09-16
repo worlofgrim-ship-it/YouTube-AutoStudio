@@ -1,3 +1,5 @@
 def schedule():
 
-    print("Scheduler running")
+    print(
+        "Scheduler ready"
+    )
