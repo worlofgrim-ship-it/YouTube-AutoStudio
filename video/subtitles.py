@@ -1,3 +1,5 @@
 def create_subtitles():
 
-    print("Creating captions")
+    print(
+        "Subtitle system ready"
+    )
