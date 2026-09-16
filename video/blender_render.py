@@ -39,14 +39,16 @@ def render_scene():
     )
 
 
-    result = subprocess.run(
+    subprocess.run(
         [
             BLENDER_PATH,
             "--background",
             "--python",
             script
-        ]
+        ],
+        check=True
     )
+
 
 
     blend_file = (
@@ -57,7 +59,7 @@ def render_scene():
     if not os.path.exists(blend_file):
 
         print(
-            "Scene file was not created. Skipping render."
+            "Scene file missing. Render cancelled."
         )
 
         return
@@ -69,13 +71,22 @@ def render_scene():
     )
 
 
+    render_command = [
+
+        BLENDER_PATH,
+
+        "--background",
+
+        "--render-animation",
+
+        blend_file
+
+    ]
+
+
     subprocess.run(
-        [
-            BLENDER_PATH,
-            "--background",
-            blend_file,
-            "--render-animation"
-        ]
+        render_command,
+        check=True
     )
 
 
