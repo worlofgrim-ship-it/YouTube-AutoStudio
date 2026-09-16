@@ -7,6 +7,7 @@ PROJECT_NAME = "YouTube-AutoStudio"
 
 
 def log(message):
+
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     os.makedirs("logs", exist_ok=True)
@@ -18,6 +19,7 @@ def log(message):
 
 
 def create_folders():
+
     folders = [
         "logs",
         "output/videos",
@@ -46,49 +48,74 @@ def load_settings():
 
     if not os.path.exists(path):
 
-        default = {
-            "channel_name": "My AI Channel",
-            "upload_frequency": "daily",
-            "video_type": "shorts",
+        settings = {
+            "channel_name": "Nundas",
+            "video_type": "youtube_shorts",
             "style": "3D animated documentary"
         }
 
         with open(path, "w") as file:
-            json.dump(default, file, indent=4)
+            json.dump(settings, file, indent=4)
 
-        log("Created default settings")
-
-        return default
+        return settings
 
 
     with open(path, "r") as file:
-        settings = json.load(file)
+        return json.load(file)
 
-    log("Settings loaded")
-
-    return settings
 
 
 def pipeline():
 
-    log("Starting YouTube-AutoStudio")
-
-    stages = [
-        "Finding video idea",
-        "Generating script",
-        "Creating voice",
-        "Building scenes",
-        "Rendering video",
-        "Generating thumbnail",
-        "Uploading video",
-        "Updating analytics"
-    ]
+    from ideas.trend_finder import find_topic
+    from script.generator import generate_script
+    from voice.tts import create_voice
+    from thumbnail.generator import create_thumbnail
 
 
-    for stage in stages:
-        log(f"[WAITING] {stage}")
+    log("Finding video idea...")
 
-    log("Pipeline complete")
+    topic = find_topic()
+
+    log(f"Topic found: {topic}")
+
+
+    log("Generating script...")
+
+    script = generate_script(topic)
+
+
+    filename = (
+        topic
+        .lower()
+        .replace(" ", "_")
+        .replace("?", "")
+        + ".txt"
+    )
+
+
+    script_path = "output/scripts/" + filename
+
+
+    with open(script_path, "w", encoding="utf-8") as file:
+        file.write(script)
+
+
+    log(f"Script saved: {script_path}")
+
+
+    log("Creating voice...")
+
+    create_voice(script)
+
+
+    log("Creating thumbnail...")
+
+    create_thumbnail(topic)
+
+
+    log("Video pipeline finished")
+
 
 
 def main():
@@ -97,15 +124,20 @@ def main():
     print(PROJECT_NAME)
     print("=" * 40)
 
+
     create_folders()
 
     settings = load_settings()
 
+
     log(
-        f"Channel: {settings['channel_name']}"
+        "Channel: "
+        + settings["channel_name"]
     )
 
+
     pipeline()
+
 
 
 if __name__ == "__main__":
