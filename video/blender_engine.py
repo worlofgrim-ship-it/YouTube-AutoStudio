@@ -17,54 +17,40 @@ def setup_render():
     scene = bpy.context.scene
 
 
-    # Blender 5.2 compatible engine selection
-    engines = [
+    # Fast Eevee renderer
+    scene.render.engine = "BLENDER_EEVEE_NEXT" if "BLENDER_EEVEE_NEXT" in [
         item.identifier
         for item in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items
-    ]
+    ] else "BLENDER_EEVEE"
 
 
-    if "BLENDER_EEVEE_NEXT" in engines:
-        scene.render.engine = "BLENDER_EEVEE_NEXT"
-
-    elif "BLENDER_EEVEE" in engines:
-        scene.render.engine = "BLENDER_EEVEE"
-
-    else:
-        scene.render.engine = "CYCLES"
-
-
-
-    # Shorts format
-    scene.render.resolution_x = 1080
-    scene.render.resolution_y = 1920
+    # SPEED SETTINGS
+    scene.render.resolution_x = 720
+    scene.render.resolution_y = 1280
     scene.render.resolution_percentage = 50
+
 
     scene.render.fps = 30
 
 
-    # Video output
-    scene.render.filepath = (
-        "output/videos/autostudio_short.mp4"
-    )
+    # Short length
+    scene.frame_start = 1
+    scene.frame_end = 150
 
 
-    scene.render.image_settings.file_format = "PNG"
+    # Faster shadows/effects
+    scene.eevee.taa_render_samples = 8 if hasattr(scene.eevee, "taa_render_samples") else 8
 
 
-
-    # FFmpeg video settings
-    scene.render.ffmpeg.format = "MPEG4"
-
-    scene.render.ffmpeg.codec = "H264"
+    scene.render.film_transparent = False
 
 
 
 def create_planet():
 
     bpy.ops.mesh.primitive_uv_sphere_add(
-        segments=64,
-        ring_count=32,
+        segments=32,
+        ring_count=16,
         location=(0,0,0)
     )
 
@@ -72,6 +58,7 @@ def create_planet():
     planet = bpy.context.object
 
     planet.name = "AutoStudio Planet"
+
 
 
     material = bpy.data.materials.new(
@@ -96,14 +83,11 @@ def create_planet():
 def create_camera():
 
     bpy.ops.object.camera_add(
-        location=(0,-12,3)
+        location=(0,-10,2)
     )
 
 
     camera = bpy.context.object
-
-    camera.name = "AutoStudio Camera"
-
 
     bpy.context.scene.camera = camera
 
@@ -117,11 +101,6 @@ def create_light():
     )
 
 
-    light = bpy.context.object
-
-    light.name = "Sun"
-
-
 
 def animate_camera():
 
@@ -130,8 +109,8 @@ def animate_camera():
 
     camera.location = (
         0,
-        -12,
-        3
+        -10,
+        2
     )
 
 
@@ -143,14 +122,14 @@ def animate_camera():
 
     camera.location = (
         0,
-        -5,
+        -6,
         2
     )
 
 
     camera.keyframe_insert(
         "location",
-        frame=120
+        frame=150
     )
 
 
@@ -173,7 +152,7 @@ def save_project():
 def generate_scene():
 
     print(
-        "Creating Shorts scene..."
+        "Creating FAST Shorts scene..."
     )
 
 
@@ -193,11 +172,10 @@ def generate_scene():
 
 
     print(
-        "Shorts scene created"
+        "Fast scene created"
     )
 
 
 
 if __name__ == "__main__":
-
     generate_scene()
