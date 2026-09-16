@@ -6,6 +6,20 @@ BLENDER_PATH = r"C:\Users\sebastiancr\Downloads\blender-5.2.2-windows-x64\blende
 
 
 
+def run_blender_script(script):
+
+    subprocess.run(
+        [
+            BLENDER_PATH,
+            "--background",
+            "--python",
+            script
+        ],
+        check=True
+    )
+
+
+
 def render_scene():
 
     print(
@@ -29,7 +43,7 @@ def render_scene():
 
 
 
-    script = (
+    scene_script = (
         "video/blender_engine.py"
     )
 
@@ -39,27 +53,22 @@ def render_scene():
     )
 
 
-    subprocess.run(
-        [
-            BLENDER_PATH,
-            "--background",
-            "--python",
-            script
-        ],
-        check=True
+    run_blender_script(
+        scene_script
     )
 
 
-
     blend_file = (
-        "output/scenes/autostudio_scene.blend"
+        os.path.abspath(
+            "output/scenes/autostudio_scene.blend"
+        )
     )
 
 
     if not os.path.exists(blend_file):
 
         print(
-            "Scene file missing. Render cancelled."
+            "Blend file missing"
         )
 
         return
@@ -67,26 +76,43 @@ def render_scene():
 
 
     print(
-        "Rendering MP4..."
+        "Rendering animation..."
     )
 
 
-    render_command = [
+    render_script = """
+import bpy
 
-        BLENDER_PATH,
+bpy.ops.wm.open_mainfile(
+    filepath=r'""" + blend_file + """'
+)
 
-        "--background",
+bpy.context.scene.render.filepath = r'output/videos/autostudio_short.mp4'
 
-        "--render-animation",
+bpy.ops.render.render(
+    animation=True
+)
+"""
 
-        blend_file
 
-    ]
+    temp_script = (
+        "video/render_animation.py"
+    )
 
 
-    subprocess.run(
-        render_command,
-        check=True
+    with open(
+        temp_script,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        file.write(
+            render_script
+        )
+
+
+    run_blender_script(
+        temp_script
     )
 
 
