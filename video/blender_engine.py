@@ -1,7 +1,5 @@
 import bpy
-import math
 import os
-
 
 
 def clear_scene():
@@ -14,15 +12,25 @@ def clear_scene():
 
 
 
-def create_world():
+def setup_render():
 
-    world = bpy.context.scene.world
+    scene = bpy.context.scene
 
+    scene.render.engine = "BLENDER_EEVEE_NEXT"
 
-    world.color = (
-        0,
-        0,
-        0
+    scene.render.resolution_x = 1080
+    scene.render.resolution_y = 1920
+
+    scene.render.resolution_percentage = 50
+
+    scene.render.fps = 30
+
+    scene.render.image_settings.file_format = "FFMPEG"
+
+    scene.render.ffmpeg.format = "MPEG4"
+
+    scene.render.filepath = (
+        "output/videos/autostudio_short.mp4"
     )
 
 
@@ -30,13 +38,9 @@ def create_world():
 def create_planet():
 
     bpy.ops.mesh.primitive_uv_sphere_add(
-
         segments=64,
-
         ring_count=32,
-
         location=(0,0,0)
-
     )
 
 
@@ -45,22 +49,16 @@ def create_planet():
     planet.name = "AutoStudio Planet"
 
 
-
     material = bpy.data.materials.new(
         "Planet Material"
     )
 
 
     material.diffuse_color = (
-
         0.05,
-
         0.3,
-
         1,
-
         1
-
     )
 
 
@@ -73,91 +71,68 @@ def create_planet():
 def create_camera():
 
     bpy.ops.object.camera_add(
-
-        location=(8,-8,4)
-
+        location=(0,-12,3)
     )
 
 
     camera = bpy.context.object
 
-
-    camera.name = (
-        "AutoStudio Camera"
-    )
+    camera.name = "AutoStudio Camera"
 
 
     bpy.context.scene.camera = camera
+
+
+    camera.rotation_euler = (
+        1.45,
+        0,
+        0
+    )
 
 
 
 def create_light():
 
     bpy.ops.object.light_add(
-
         type="SUN",
-
         location=(5,5,5)
-
     )
 
 
     light = bpy.context.object
 
-
     light.name = "Sun"
 
 
 
-def animate():
+def animate_camera():
 
     camera = bpy.context.scene.camera
 
 
-    bpy.context.scene.frame_start = 1
-
-    bpy.context.scene.frame_end = 120
-
-
-
     camera.location = (
-
-        8,
-
-        -8,
-
-        4
-
+        0,
+        -12,
+        3
     )
 
 
     camera.keyframe_insert(
-
         "location",
-
         frame=1
-
     )
 
 
-
     camera.location = (
-
-        3,
-
-        -3,
-
+        0,
+        -5,
         2
-
     )
 
 
     camera.keyframe_insert(
-
         "location",
-
         frame=120
-
     )
 
 
@@ -165,19 +140,14 @@ def animate():
 def save_project():
 
     os.makedirs(
-
         "output/scenes",
-
         exist_ok=True
-
     )
 
 
     bpy.ops.wm.save_as_mainfile(
-
         filepath=
         "output/scenes/autostudio_scene.blend"
-
     )
 
 
@@ -185,13 +155,13 @@ def save_project():
 def generate_scene():
 
     print(
-        "Creating 3D scene..."
+        "Creating Shorts scene..."
     )
 
 
     clear_scene()
 
-    create_world()
+    setup_render()
 
     create_planet()
 
@@ -199,14 +169,13 @@ def generate_scene():
 
     create_light()
 
-    animate()
+    animate_camera()
 
     save_project()
 
 
-
     print(
-        "Saved Blender project"
+        "Shorts scene created"
     )
 
 
