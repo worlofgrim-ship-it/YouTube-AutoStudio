@@ -14,11 +14,6 @@ def render_scene():
 
 
     os.makedirs(
-        "output/scenes",
-        exist_ok=True
-    )
-
-    os.makedirs(
         "output/videos",
         exist_ok=True
     )
@@ -27,28 +22,11 @@ def render_scene():
     if not os.path.exists(BLENDER_PATH):
 
         print(
-            "Portable Blender not found:"
-        )
-
-        print(
-            BLENDER_PATH
-        )
-
-        print(
-            "Scene generation skipped."
+            "Blender not found"
         )
 
         return
 
-
-
-    print(
-        "Blender found:"
-    )
-
-    print(
-        BLENDER_PATH
-    )
 
 
     script = (
@@ -56,57 +34,41 @@ def render_scene():
     )
 
 
-    if not os.path.exists(script):
-
-        print(
-            "Blender engine script missing"
-        )
-
-        return
-
-
-
     print(
-        "Running Blender scene generator..."
+        "Generating scene..."
     )
 
 
-    command = [
-
-        BLENDER_PATH,
-
-        "--background",
-
-        "--python",
-
-        script
-
-    ]
+    subprocess.run(
+        [
+            BLENDER_PATH,
+            "--background",
+            "--python",
+            script
+        ]
+    )
 
 
-    try:
-
-        subprocess.run(
-            command,
-            check=True
-        )
-
-
-        print(
-            "Blender scene generated successfully"
-        )
-
-
-    except Exception as error:
-
-        print(
-            "Blender error:"
-        )
-
-        print(error)
-
+    blend_file = (
+        "output/scenes/autostudio_scene.blend"
+    )
 
 
     print(
-        "Blender pipeline finished"
+        "Rendering MP4..."
+    )
+
+
+    subprocess.run(
+        [
+            BLENDER_PATH,
+            "--background",
+            blend_file,
+            "--render-animation"
+        ]
+    )
+
+
+    print(
+        "Video render complete"
     )
