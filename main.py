@@ -6,20 +6,28 @@ import datetime
 PROJECT_NAME = "YouTube-AutoStudio"
 
 
+
 def log(message):
 
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
-    os.makedirs("logs", exist_ok=True)
+    os.makedirs(
+        "logs",
+        exist_ok=True
+    )
 
     with open(
         "logs/runtime.log",
         "a",
         encoding="utf-8"
     ) as file:
+
         file.write(
             f"[{timestamp}] {message}\n"
         )
+
 
     print(message)
 
@@ -32,12 +40,14 @@ def create_folders():
         "logs",
 
         "output/videos",
-        "output/thumbnails",
         "output/scripts",
+        "output/thumbnails",
+
+        "config",
 
         "ideas",
 
-        "script/prompts",
+        "script",
 
         "voice",
 
@@ -49,14 +59,13 @@ def create_folders():
 
         "analytics",
 
-        "scheduler",
-
-        "config"
+        "scheduler"
 
     ]
 
 
     for folder in folders:
+
         os.makedirs(
             folder,
             exist_ok=True
@@ -78,16 +87,14 @@ def load_settings():
 
         settings = {
 
-            "channel_name": "Nundas",
-
-            "video_type":
-            "youtube_shorts",
+            "channel_name":
+            "Nundas",
 
             "style":
             "3D animated documentary",
 
-            "length_seconds":
-            60
+            "video_type":
+            "youtube_shorts"
 
         }
 
@@ -103,11 +110,6 @@ def load_settings():
                 file,
                 indent=4
             )
-
-
-        log(
-            "Created default settings"
-        )
 
 
         return settings
@@ -135,6 +137,7 @@ def load_settings():
 
 def pipeline():
 
+
     from ideas.trend_finder import find_topic
 
     from script.generator import generate_script
@@ -144,10 +147,6 @@ def pipeline():
     from thumbnail.generator import create_thumbnail
 
 
-
-    # -------------------------
-    # FIND IDEA
-    # -------------------------
 
     log(
         "Finding video idea..."
@@ -164,16 +163,12 @@ def pipeline():
 
 
 
-    # -------------------------
-    # GENERATE SCRIPT
-    # -------------------------
-
     log(
         "Generating script..."
     )
 
 
-    script_data = generate_script(
+    script = generate_script(
         topic
     )
 
@@ -189,24 +184,16 @@ def pipeline():
 
 
 
-    # -------------------------
-    # VOICE
-    # -------------------------
-
     log(
         "Creating voice..."
     )
 
 
     create_voice(
-        script_data["title"]
+        topic
     )
 
 
-
-    # -------------------------
-    # THUMBNAIL
-    # -------------------------
 
     log(
         "Creating thumbnail..."
@@ -214,42 +201,42 @@ def pipeline():
 
 
     create_thumbnail(
-        script_data["thumbnail"]
+        script["thumbnail"]
     )
 
 
 
-    # -------------------------
-    # FUTURE SYSTEMS
-    # -------------------------
-
     log(
-    "Preparing Blender engine..."
-)
-
-
-try:
-
-    from video.blender_render import render_scene
-
-    render_scene()
-
-
-    log(
-        "Blender engine ready"
+        "Preparing Blender engine..."
     )
 
 
-except Exception as e:
+    try:
 
-    log(
-        "Blender engine skipped: "
-        + str(e)
-    )
+        from video.blender_render import render_scene
+
+
+        render_scene()
+
+
+        log(
+            "Blender engine ready"
+        )
+
+
+    except Exception as error:
+
+        log(
+            "Blender skipped: "
+            + str(error)
+        )
+
+
 
     log(
         "Preparing YouTube uploader..."
     )
+
 
     log(
         "Preparing analytics..."
@@ -259,6 +246,7 @@ except Exception as e:
     log(
         "Video pipeline finished"
     )
+
 
 
 
