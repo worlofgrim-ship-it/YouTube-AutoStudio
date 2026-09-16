@@ -3,31 +3,12 @@ import json
 import datetime
 
 
+
 PROJECT_NAME = "YouTube-AutoStudio"
 
 
 
 def log(message):
-
-    timestamp = datetime.datetime.now().strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
-
-    os.makedirs(
-        "logs",
-        exist_ok=True
-    )
-
-    with open(
-        "logs/runtime.log",
-        "a",
-        encoding="utf-8"
-    ) as file:
-
-        file.write(
-            f"[{timestamp}] {message}\n"
-        )
-
 
     print(message)
 
@@ -37,29 +18,13 @@ def create_folders():
 
     folders = [
 
-        "logs",
-
         "output/videos",
         "output/scripts",
         "output/thumbnails",
+        "output/scenes",
 
-        "config",
-
-        "ideas",
-
-        "script",
-
-        "voice",
-
-        "video",
-
-        "thumbnail",
-
-        "upload",
-
-        "analytics",
-
-        "scheduler"
+        "logs",
+        "config"
 
     ]
 
@@ -83,68 +48,33 @@ def load_settings():
     path = "config/settings.json"
 
 
-    if not os.path.exists(path):
-
-        settings = {
-
-            "channel_name":
-            "Nundas",
-
-            "style":
-            "3D animated documentary",
-
-            "video_type":
-            "youtube_shorts"
-
-        }
-
+    if os.path.exists(path):
 
         with open(
             path,
-            "w",
-            encoding="utf-8"
+            "r"
         ) as file:
 
-            json.dump(
-                settings,
-                file,
-                indent=4
-            )
-
-
-        return settings
+            return json.load(file)
 
 
 
-    with open(
-        path,
-        "r",
-        encoding="utf-8"
-    ) as file:
+    return {
 
-        settings = json.load(file)
+        "channel_name":
+        "Nundas"
 
-
-    log(
-        "Settings loaded"
-    )
-
-
-    return settings
-
+    }
 
 
 
 def pipeline():
 
-
     from ideas.trend_finder import find_topic
-
     from script.generator import generate_script
-
     from voice.tts import create_voice
-
     from thumbnail.generator import create_thumbnail
+    from video.blender_render import render_scene
 
 
 
@@ -178,11 +108,6 @@ def pipeline():
     )
 
 
-    log(
-        "Script saved in output/scripts"
-    )
-
-
 
     log(
         "Creating voice..."
@@ -207,34 +132,16 @@ def pipeline():
 
 
     log(
-        "Preparing Blender engine..."
+        "Starting Blender renderer..."
     )
 
 
-    try:
-
-        from video.blender_render import render_scene
-
-
-        render_scene()
-
-
-        log(
-            "Blender engine ready"
-        )
-
-
-    except Exception as error:
-
-        log(
-            "Blender skipped: "
-            + str(error)
-        )
+    render_scene()
 
 
 
     log(
-        "Preparing YouTube uploader..."
+        "Preparing uploader..."
     )
 
 
@@ -244,23 +151,20 @@ def pipeline():
 
 
     log(
-        "Video pipeline finished"
+        "Pipeline complete"
     )
-
-
 
 
 
 def main():
 
-    print("=" * 40)
+    print("="*40)
 
     print(
         PROJECT_NAME
     )
 
-    print("=" * 40)
-
+    print("="*40)
 
 
     create_folders()
@@ -276,7 +180,6 @@ def main():
 
 
     pipeline()
-
 
 
 
