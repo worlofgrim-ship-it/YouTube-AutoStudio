@@ -1,31 +1,31 @@
-import subprocess
 import os
 
 
 def render_scene():
 
-    script = (
+    print(
+        "Checking Blender engine..."
+    )
+
+
+    blender_file = (
         "video/blender_engine.py"
     )
 
 
-    if os.path.exists(script):
+    if os.path.exists(blender_file):
 
         print(
-            "Blender script detected"
+            "Blender scene generator found"
         )
 
-
-        # Blender will be connected here
-        # in the next step
-
         print(
-            "Scene generation ready"
+            "Scene ready for rendering"
         )
 
 
     else:
 
         print(
-            "Missing Blender engine"
+            "Blender engine not found"
         )
