@@ -16,11 +16,24 @@ def setup_render():
 
     scene = bpy.context.scene
 
-    scene.render.engine = "BLENDER_EEVEE_NEXT"
+    # Blender 5.2 compatible
+    available = [
+        item.identifier
+        for item in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items
+    ]
+
+    if "BLENDER_EEVEE_NEXT" in available:
+        scene.render.engine = "BLENDER_EEVEE_NEXT"
+
+    elif "BLENDER_EEVEE" in available:
+        scene.render.engine = "BLENDER_EEVEE"
+
+    else:
+        scene.render.engine = "CYCLES"
+
 
     scene.render.resolution_x = 1080
     scene.render.resolution_y = 1920
-
     scene.render.resolution_percentage = 50
 
     scene.render.fps = 30
@@ -83,13 +96,6 @@ def create_camera():
     bpy.context.scene.camera = camera
 
 
-    camera.rotation_euler = (
-        1.45,
-        0,
-        0
-    )
-
-
 
 def create_light():
 
@@ -116,7 +122,6 @@ def animate_camera():
         3
     )
 
-
     camera.keyframe_insert(
         "location",
         frame=1
@@ -128,7 +133,6 @@ def animate_camera():
         -5,
         2
     )
-
 
     camera.keyframe_insert(
         "location",
