@@ -136,7 +136,21 @@ def pipeline():
     )
 
 
+   try:
+
     render_scene()
+
+    log(
+        "Blender render complete"
+    )
+
+
+except Exception as error:
+
+    log(
+        "Blender failed: "
+        + str(error)
+    )
 
 
 
