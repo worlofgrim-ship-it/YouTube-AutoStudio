@@ -1,45 +1,29 @@
 import os
 import json
-import datetime
-
 
 
 PROJECT_NAME = "YouTube-AutoStudio"
 
 
-
 def log(message):
-
     print(message)
-
 
 
 def create_folders():
 
     folders = [
-
         "output/videos",
         "output/scripts",
         "output/thumbnails",
         "output/scenes",
-
         "logs",
         "config"
-
     ]
 
-
     for folder in folders:
+        os.makedirs(folder, exist_ok=True)
 
-        os.makedirs(
-            folder,
-            exist_ok=True
-        )
-
-
-    log(
-        "Folder structure verified"
-    )
+    log("Folder structure verified")
 
 
 
@@ -47,24 +31,46 @@ def load_settings():
 
     path = "config/settings.json"
 
-
     if os.path.exists(path):
 
         with open(
             path,
-            "r"
+            "r",
+            encoding="utf-8"
         ) as file:
 
-            return json.load(file)
+            settings = json.load(file)
+
+        log("Settings loaded")
+
+        return settings
 
 
-
-    return {
-
-        "channel_name":
-        "Nundas"
-
+    settings = {
+        "channel_name": "Nundas"
     }
+
+
+    os.makedirs(
+        "config",
+        exist_ok=True
+    )
+
+
+    with open(
+        path,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        json.dump(
+            settings,
+            file,
+            indent=4
+        )
+
+
+    return settings
 
 
 
@@ -77,52 +83,33 @@ def pipeline():
     from video.blender_render import render_scene
 
 
-
-    log(
-        "Finding video idea..."
-    )
+    log("Finding video idea...")
 
 
     topic = find_topic()
 
 
     log(
-        "Topic found: "
-        + topic
+        "Topic found: " + topic
     )
 
 
-
-    log(
-        "Generating script..."
-    )
+    log("Generating script...")
 
 
-    script = generate_script(
-        topic
-    )
+    script = generate_script(topic)
 
 
-    log(
-        "AI script generated"
-    )
+    log("AI script generated")
 
 
-
-    log(
-        "Creating voice..."
-    )
+    log("Creating voice...")
 
 
-    create_voice(
-        topic
-    )
+    create_voice(topic)
 
 
-
-    log(
-        "Creating thumbnail..."
-    )
+    log("Creating thumbnail...")
 
 
     create_thumbnail(
@@ -130,55 +117,42 @@ def pipeline():
     )
 
 
-
-    log(
-        "Starting Blender renderer..."
-    )
+    log("Starting Blender renderer...")
 
 
-   try:
+    try:
 
-    render_scene()
+        render_scene()
 
-    log(
-        "Blender render complete"
-    )
-
-
-except Exception as error:
-
-    log(
-        "Blender failed: "
-        + str(error)
-    )
+        log(
+            "Blender render complete"
+        )
 
 
+    except Exception as error:
 
-    log(
-        "Preparing uploader..."
-    )
-
-
-    log(
-        "Preparing analytics..."
-    )
+        log(
+            "Blender failed: " + str(error)
+        )
 
 
-    log(
-        "Pipeline complete"
-    )
+    log("Preparing uploader...")
+
+
+    log("Preparing analytics...")
+
+
+    log("Pipeline complete")
 
 
 
 def main():
 
-    print("="*40)
+    print("=" * 40)
 
-    print(
-        PROJECT_NAME
-    )
+    print(PROJECT_NAME)
 
-    print("="*40)
+    print("=" * 40)
 
 
     create_folders()
@@ -198,5 +172,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     main()
