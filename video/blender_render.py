@@ -1,11 +1,40 @@
 import os
+import shutil
 import subprocess
-import sys
+
+
+def find_blender():
+
+    possible_paths = [
+
+        "blender",
+
+        r"C:\Program Files\Blender Foundation\Blender 4.5\blender.exe",
+
+        r"C:\Program Files\Blender Foundation\Blender 4.4\blender.exe",
+
+        r"C:\Program Files\Blender Foundation\Blender 4.3\blender.exe"
+
+    ]
+
+
+    for path in possible_paths:
+
+        if shutil.which(path) or os.path.exists(path):
+
+            return path
+
+
+    return None
+
 
 
 def render_scene():
 
-    print("Starting Blender render pipeline...")
+
+    print(
+        "Starting Blender render pipeline..."
+    )
 
 
     os.makedirs(
@@ -13,57 +42,92 @@ def render_scene():
         exist_ok=True
     )
 
-
-    blender_script = (
-        "video/blender_engine.py"
+    os.makedirs(
+        "output/videos",
+        exist_ok=True
     )
 
 
-    if not os.path.exists(blender_script):
+    blender = find_blender()
+
+
+
+    if blender is None:
 
         print(
-            "Blender engine missing"
+            "Blender not installed."
+        )
+
+        print(
+            "Scene generator prepared but render skipped."
         )
 
         return
 
 
 
-    print(
-        "Blender script found"
+    script = (
+        "video/blender_engine.py"
     )
 
 
-    print(
-        "Creating Blender scene..."
-    )
-
-
-    # Blender connection point
-    # This will call Blender when installed
-
-    print(
-        "Scene generation prepared"
-    )
-
-
-    blend_output = (
+    blend_file = (
         "output/scenes/autostudio_scene.blend"
     )
 
 
-    with open(
-        blend_output,
-        "w",
-        encoding="utf-8"
-    ) as file:
 
-        file.write(
-            "Blender project placeholder\n"
-        )
+    print(
+        "Blender found:"
+        ,
+        blender
+    )
+
 
 
     print(
-        "Created:",
-        blend_output
+        "Generating Blender project..."
+    )
+
+
+
+    command = [
+
+        blender,
+
+        "--background",
+
+        "--python",
+
+        script
+
+    ]
+
+
+
+    try:
+
+        subprocess.run(
+            command,
+            check=True
+        )
+
+
+        print(
+            "Blender scene generated"
+        )
+
+
+
+    except Exception as error:
+
+        print(
+            "Blender error:",
+            error
+        )
+
+
+
+    print(
+        "Render pipeline finished"
     )
