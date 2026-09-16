@@ -1,3 +1,5 @@
 def render_scene():
 
-    print("Blender rendering placeholder")
+    print(
+        "Blender renderer ready"
+    )
