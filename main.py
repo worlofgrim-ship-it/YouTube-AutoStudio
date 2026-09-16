@@ -224,7 +224,27 @@ def pipeline():
     # -------------------------
 
     log(
-        "Preparing video engine..."
+    "Preparing Blender engine..."
+)
+
+
+try:
+
+    from video.blender_render import render_scene
+
+    render_scene()
+
+
+    log(
+        "Blender engine ready"
+    )
+
+
+except Exception as e:
+
+    log(
+        "Blender engine skipped: "
+        + str(e)
     )
 
     log(
