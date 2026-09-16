@@ -1,4 +1,6 @@
 import bpy
+import math
+
 
 
 def clear_scene():
@@ -11,67 +13,35 @@ def clear_scene():
 
 
 
-def create_black_hole():
-
-    bpy.ops.mesh.primitive_uv_sphere_add(
-        segments=128,
-        ring_count=64,
-        location=(0, 0, 0)
-    )
-
-    black_hole = bpy.context.object
-
-    black_hole.name = "Black Hole"
-
-    black_hole.scale = (
-        3,
-        3,
-        3
-    )
-
-
-    material = bpy.data.materials.new(
-        "Black Hole Material"
-    )
-
-    material.diffuse_color = (
-        0,
-        0,
-        0,
-        1
-    )
-
-    black_hole.data.materials.append(
-        material
-    )
-
-
-
-def create_earth():
+def create_planet():
 
     bpy.ops.mesh.primitive_uv_sphere_add(
         segments=64,
         ring_count=32,
-        location=(8, 0, 0)
+        location=(0,0,0)
     )
 
-    earth = bpy.context.object
 
-    earth.name = "Earth"
+    planet = bpy.context.object
+
+    planet.name = "Planet"
+
 
 
     material = bpy.data.materials.new(
-        "Earth Material"
+        "Planet Material"
     )
 
+
     material.diffuse_color = (
-        0.05,
-        0.3,
+        0.1,
+        0.5,
         1,
         1
     )
 
-    earth.data.materials.append(
+
+    planet.data.materials.append(
         material
     )
 
@@ -80,12 +50,14 @@ def create_earth():
 def create_camera():
 
     bpy.ops.object.camera_add(
-        location=(15, -15, 8)
+        location=(10,-10,5)
     )
+
 
     camera = bpy.context.object
 
-    camera.name = "Cinematic Camera"
+    camera.name = "Main Camera"
+
 
     bpy.context.scene.camera = camera
 
@@ -94,15 +66,14 @@ def create_camera():
 def create_light():
 
     bpy.ops.object.light_add(
-        type="POINT",
-        location=(5, -5, 10)
+        type="SUN",
+        location=(5,5,5)
     )
+
 
     light = bpy.context.object
 
-    light.name = "Space Light"
-
-    light.data.energy = 2000
+    light.name = "Sun"
 
 
 
@@ -113,14 +84,15 @@ def animate_camera():
 
     bpy.context.scene.frame_start = 1
 
-    bpy.context.scene.frame_end = 240
+    bpy.context.scene.frame_end = 120
 
 
     camera.location = (
-        15,
-        -15,
-        8
+        10,
+        -10,
+        5
     )
+
 
     camera.keyframe_insert(
         "location",
@@ -129,14 +101,15 @@ def animate_camera():
 
 
     camera.location = (
-        5,
-        -5,
-        3
+        3,
+        -3,
+        2
     )
+
 
     camera.keyframe_insert(
         "location",
-        frame=240
+        frame=120
     )
 
 
@@ -144,14 +117,13 @@ def animate_camera():
 def generate_scene():
 
     print(
-        "Generating Blender scene..."
+        "Generating 3D scene"
     )
+
 
     clear_scene()
 
-    create_black_hole()
-
-    create_earth()
+    create_planet()
 
     create_camera()
 
@@ -161,7 +133,7 @@ def generate_scene():
 
 
     print(
-        "Blender scene generated successfully"
+        "3D scene complete"
     )
 
 
