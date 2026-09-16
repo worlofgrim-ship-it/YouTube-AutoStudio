@@ -1,36 +1,12 @@
 import os
-import shutil
 import subprocess
 
 
-def find_blender():
-
-    possible_paths = [
-
-        "blender",
-
-        r"C:\Program Files\Blender Foundation\Blender 4.5\blender.exe",
-
-        r"C:\Program Files\Blender Foundation\Blender 4.4\blender.exe",
-
-        r"C:\Program Files\Blender Foundation\Blender 4.3\blender.exe"
-
-    ]
-
-
-    for path in possible_paths:
-
-        if shutil.which(path) or os.path.exists(path):
-
-            return path
-
-
-    return None
+BLENDER_PATH = r"C:\Users\sebastiancr\Downloads\blender-5.2.2-windows-x64\blender-5.2.2-windows-x64\blender.exe"
 
 
 
 def render_scene():
-
 
     print(
         "Starting Blender render pipeline..."
@@ -48,22 +24,31 @@ def render_scene():
     )
 
 
-    blender = find_blender()
-
-
-
-    if blender is None:
+    if not os.path.exists(BLENDER_PATH):
 
         print(
-            "Blender not installed."
+            "Portable Blender not found:"
         )
 
         print(
-            "Scene generator prepared but render skipped."
+            BLENDER_PATH
+        )
+
+        print(
+            "Scene generation skipped."
         )
 
         return
 
+
+
+    print(
+        "Blender found:"
+    )
+
+    print(
+        BLENDER_PATH
+    )
 
 
     script = (
@@ -71,29 +56,24 @@ def render_scene():
     )
 
 
-    blend_file = (
-        "output/scenes/autostudio_scene.blend"
-    )
+    if not os.path.exists(script):
+
+        print(
+            "Blender engine script missing"
+        )
+
+        return
 
 
 
     print(
-        "Blender found:"
-        ,
-        blender
+        "Running Blender scene generator..."
     )
-
-
-
-    print(
-        "Generating Blender project..."
-    )
-
 
 
     command = [
 
-        blender,
+        BLENDER_PATH,
 
         "--background",
 
@@ -102,7 +82,6 @@ def render_scene():
         script
 
     ]
-
 
 
     try:
@@ -114,20 +93,20 @@ def render_scene():
 
 
         print(
-            "Blender scene generated"
+            "Blender scene generated successfully"
         )
-
 
 
     except Exception as error:
 
         print(
-            "Blender error:",
-            error
+            "Blender error:"
         )
+
+        print(error)
 
 
 
     print(
-        "Render pipeline finished"
+        "Blender pipeline finished"
     )
