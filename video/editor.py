@@ -1,3 +1,5 @@
 def edit_video():
 
-    print("Editing video")
+    print(
+        "Video editor ready"
+    )
