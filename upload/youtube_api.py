@@ -1,3 +1,6 @@
 def upload_video(file):
 
-    print("Uploading:", file)
+    print(
+        "Upload system ready:",
+        file
+    )
