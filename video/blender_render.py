@@ -39,7 +39,7 @@ def render_scene():
     )
 
 
-    subprocess.run(
+    result = subprocess.run(
         [
             BLENDER_PATH,
             "--background",
@@ -52,6 +52,16 @@ def render_scene():
     blend_file = (
         "output/scenes/autostudio_scene.blend"
     )
+
+
+    if not os.path.exists(blend_file):
+
+        print(
+            "Scene file was not created. Skipping render."
+        )
+
+        return
+
 
 
     print(
