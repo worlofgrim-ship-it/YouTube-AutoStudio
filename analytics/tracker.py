@@ -1,3 +1,5 @@
 def track():
 
-    print("Tracking analytics")
+    print(
+        "Analytics tracker ready"
+    )
