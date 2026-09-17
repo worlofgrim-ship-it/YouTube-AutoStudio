@@ -131,7 +131,9 @@ def main():
     )
 
 
-    check_system(settings)
+    settings = check_system(settings)
+
+save_settings(settings)
 
 
     pipeline(settings)
