@@ -251,20 +251,21 @@ def pipeline(settings):
 
 
 
-    if settings.get(
-        "youtube_upload"
-    ):
+if settings.get("youtube_upload"):
 
-        log(
-            "Uploading to YouTube..."
-        )
+    log(
+        "Uploading to YouTube..."
+    )
 
-        from youtube.uploader import upload_video
+    from youtube.uploader import upload_video
 
-        upload_video(
-            "output/videos/autostudio_short.mp4",
-            topic
-        )
+
+    upload_video(
+        video_file="output/videos/autostudio_short.mp4",
+        title=topic,
+        description=script["description"],
+        thumbnail="output/thumbnails/thumbnail.png"
+    )
 
 
 
