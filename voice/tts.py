@@ -1,41 +1,55 @@
+import edge_tts
+import asyncio
 import os
+
+
+OUTPUT = "output/audio/narration.mp3"
+
+
+VOICE = "en-US-GuyNeural"
+
+
+
+async def generate_voice(text):
+
+    os.makedirs(
+        "output/audio",
+        exist_ok=True
+    )
+
+
+    communicate = edge_tts.Communicate(
+        text,
+        VOICE
+    )
+
+
+    await communicate.save(
+        OUTPUT
+    )
+
+
+    print(
+        "Voice created:",
+        OUTPUT
+    )
+
 
 
 def create_voice(script):
 
-    os.makedirs(
-        "output/voice",
-        exist_ok=True
-    )
-
-    output = "output/voice/script.txt"
-
-
-    # Handle AI script dictionary
     if isinstance(script, dict):
 
-        if "script" in script:
-            text = script["script"]
-
-        elif "content" in script:
-            text = script["content"]
-
-        else:
-            text = str(script)
+        text = script.get(
+            "narration",
+            ""
+        )
 
     else:
+
         text = script
 
 
-    with open(
-        output,
-        "w",
-        encoding="utf-8"
-    ) as file:
-
-        file.write(text)
-
-
-    print("Voice script saved")
-
-    return output
+    asyncio.run(
+        generate_voice(text)
+    )
