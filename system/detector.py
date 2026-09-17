@@ -1,26 +1,52 @@
 import os
+import shutil
 
 
-def check_file(path,name):
+def find_blender():
 
-    if path and os.path.exists(path):
+    locations = [
 
-        print(
-            "✓",
-            name,
-            "found"
-        )
+        shutil.which("blender"),
 
-        return True
+        r"C:\Program Files\Blender Foundation\Blender\blender.exe",
+
+        r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe"
+
+    ]
 
 
-    print(
-        "✗",
-        name,
-        "missing"
-    )
+    for path in locations:
 
-    return False
+        if path and os.path.exists(path):
+
+            return path
+
+
+    return ""
+
+
+
+def find_ffmpeg():
+
+    locations = [
+
+        shutil.which("ffmpeg"),
+
+        r"C:\ffmpeg\bin\ffmpeg.exe",
+
+        r"C:\Users\Public\ffmpeg\bin\ffmpeg.exe"
+
+    ]
+
+
+    for path in locations:
+
+        if path and os.path.exists(path):
+
+            return path
+
+
+    return ""
 
 
 
@@ -29,31 +55,46 @@ def check_system(settings):
 
     print()
 
-    print("Checking system...")
+    print("System Check")
 
-    print("-----------------")
-
-
-    check_file(
-        settings.get("blender_path"),
-        "Blender"
-    )
+    print("----------------")
 
 
-    check_file(
-        settings.get("ffmpeg_path"),
-        "FFmpeg"
-    )
+    blender = find_blender()
+
+    ffmpeg = find_ffmpeg()
 
 
-    print(
-        "✓ Python"
-    )
+    if blender:
+
+        print("✓ Blender")
+
+        settings["blender_path"] = blender
+
+    else:
+
+        print("✗ Blender missing")
 
 
-    print(
-        "✓ Project files"
-    )
+
+    if ffmpeg:
+
+        print("✓ FFmpeg")
+
+        settings["ffmpeg_path"] = ffmpeg
+
+    else:
+
+        print("✗ FFmpeg missing")
+
+
+
+    print("✓ Python")
+
+    print("✓ Files")
 
 
     print()
+
+
+    return settings
