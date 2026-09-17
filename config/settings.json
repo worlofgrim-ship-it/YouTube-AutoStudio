@@ -19,7 +19,7 @@
 
     "youtube": {
 
-        "enabled": false,
+        "enabled": true,
 
         "privacy": "private"
 
