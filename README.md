@@ -1,12 +1,19 @@
-INSTALL
+# YouTube-AutoStudio
 
-1. Install Python
-2. Install Blender
-3. Install FFmpeg
-4. Run:
+AI powered YouTube Shorts generator.
 
-python setup.py
+## Features
 
-5. Run:
+- Topic generation
+- Script generation
+- Voice generation
+- Blender rendering
+- Thumbnail creation
+- MP4 encoding
+- YouTube upload
 
-python main.py
+## Installation
+
+Install Python 3.11+
+
+Install requirements:
