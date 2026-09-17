@@ -1,65 +1,132 @@
 import os
 import subprocess
-import shutil
 
 
 BLENDER_PATH = r"C:\Users\sebastiancr\Downloads\blender-5.2.2-windows-x64\blender-5.2.2-windows-x64\blender.exe"
 
+FFMPEG_PATH = r"C:\Users\sebastiancr\Downloads\ffmpeg-9.0.1\ffmpeg-9.0.1\bin\ffmpeg.exe"
+
 
 FRAME_FOLDER = r"C:\output\videos"
-
 
 OUTPUT_VIDEO = r"output/videos/autostudio_short.mp4"
 
 
 
-def encode_video():
-
-    print("Encoding frames into MP4...")
-
-
-    command = [
-
-       r"C:\Users\sebastiancr\Downloads\ffmpeg-9.0.1\ffmpeg-9.0.1\bin\ffmpeg.exe",
-
-        "-y",
-
-        "-framerate",
-        "30",
-
-        "-i",
-        FRAME_FOLDER + r"\frame.mp4%04d.png",
-
-        "-c:v",
-        "libx264",
-
-        "-pix_fmt",
-        "yuv420p",
-
-        OUTPUT_VIDEO
-    ]
-
+def run_blender(script):
 
     subprocess.run(
-        command,
+        [
+            BLENDER_PATH,
+            "--background",
+            "--python",
+            script
+        ],
         check=True
     )
 
 
+
+def create_scene():
+
     print(
-        "MP4 created:"
+        "Generating Blender scene..."
     )
 
-    print(
-        OUTPUT_VIDEO
+    run_blender(
+        "video/blender_engine.py"
     )
 
 
 
-def cleanup_frames():
+def render_frames():
 
     print(
-        "Cleaning temporary frames..."
+        "Rendering frames..."
+    )
+
+
+    blend_file = os.path.abspath(
+        "output/scenes/autostudio_scene.blend"
+    )
+
+
+    render_script = f"""
+
+import bpy
+
+bpy.ops.wm.open_mainfile(
+filepath=r'{blend_file}'
+)
+
+bpy.context.scene.render.filepath=r'C:/output/videos/frame.mp4'
+
+bpy.ops.render.render(
+animation=True
+)
+
+"""
+
+
+    with open(
+        "video/render_animation.py",
+        "w"
+    ) as f:
+
+        f.write(render_script)
+
+
+
+    run_blender(
+        "video/render_animation.py"
+    )
+
+
+
+def encode_video():
+
+    print(
+        "Encoding MP4..."
+    )
+
+
+    subprocess.run(
+        [
+
+            FFMPEG_PATH,
+
+            "-y",
+
+            "-framerate",
+            "30",
+
+            "-i",
+            FRAME_FOLDER + r"\frame.mp4%04d.png",
+
+            "-c:v",
+            "libx264",
+
+            "-pix_fmt",
+            "yuv420p",
+
+            OUTPUT_VIDEO
+
+        ],
+        check=True
+    )
+
+
+
+    print(
+        "MP4 created"
+    )
+
+
+
+def cleanup():
+
+    print(
+        "Cleaning frames..."
     )
 
 
@@ -75,51 +142,23 @@ def cleanup_frames():
             )
 
 
-    print(
-        "Frame cleanup complete"
-    )
-
-
 
 def render_scene():
 
     print(
-        "Starting v1.6.6 video pipeline..."
+        "Starting v1.6.6.1 full pipeline..."
     )
 
 
-    os.makedirs(
-        "output/videos",
-        exist_ok=True
-    )
+    create_scene()
 
-
-    blend_file = (
-        "output/scenes/autostudio_scene.blend"
-    )
-
-
-    if not os.path.exists(blend_file):
-
-        print(
-            "Blend file missing"
-        )
-
-        return
-
-
-
-    print(
-        "Rendering frames already complete."
-    )
-
+    render_frames()
 
     encode_video()
 
-
-    cleanup_frames()
+    cleanup()
 
 
     print(
-        "YouTube Short ready!"
+        "YouTube Short finished!"
     )
