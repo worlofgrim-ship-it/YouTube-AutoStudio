@@ -1,40 +1,54 @@
 import os
-import re
 
 
-def create_thumbnail(topic):
+
+def create_thumbnail(text):
 
     os.makedirs(
         "output/thumbnails",
         exist_ok=True
     )
 
-    # Remove characters Windows does not allow in filenames
-    safe_name = re.sub(
-        r'[<>:"/\\|?*]',
-        '',
-        topic
+
+    filename = (
+        text
+        .replace(" ","_")
+        [:80]
     )
 
-    safe_name = safe_name.replace(" ", "_")
 
-
-    file = (
+    path = (
         "output/thumbnails/"
-        + safe_name
+        + filename
         + ".txt"
     )
 
 
-    with open(file, "w", encoding="utf-8") as f:
+    with open(
+        path,
+        "w",
+        encoding="utf8"
+    ) as file:
 
-        f.write(
-            "Thumbnail idea:\n\n"
-            + topic
+        file.write(
+            """
+YouTube Thumbnail Plan
+
+Main Subject:
+{}
+
+
+Style:
+- Cinematic
+- High contrast
+- Big text
+- Viral YouTube style
+
+""".format(text)
         )
 
 
     print(
         "Thumbnail created:",
-        file
+        path
     )
