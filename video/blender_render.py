@@ -20,7 +20,7 @@ def encode_video():
 
     command = [
 
-        "ffmpeg",
+       r"C:\Users\sebastiancr\Downloads\ffmpeg-9.0.1\ffmpeg-9.0.1\bin\ffmpeg.exe",
 
         "-y",
 
