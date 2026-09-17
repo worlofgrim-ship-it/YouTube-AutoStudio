@@ -1,4 +1,5 @@
-python-dotenv
+google-api-python-client
+google-auth
+google-auth-oauthlib
 requests
 pillow
-moviepy
