@@ -1,7 +1,21 @@
 {
     "channel_name": "Nundas",
-    "upload_frequency": "daily",
+
+    "blender_path": "",
+
+    "ffmpeg_path": "",
+
+    "youtube_upload": false,
+
     "video_type": "youtube_shorts",
-    "style": "Zack D Films inspired 3D animation",
-    "target_length_seconds": 45
+
+    "style": "3D animated science documentary",
+
+    "target_length_seconds": 45,
+
+    "fps": 30,
+
+    "resolution_x": 1080,
+
+    "resolution_y": 1920
 }
