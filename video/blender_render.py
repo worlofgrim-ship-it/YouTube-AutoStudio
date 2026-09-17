@@ -6,7 +6,6 @@ BLENDER_PATH = r"C:\Users\sebastiancr\Downloads\blender-5.2.2-windows-x64\blende
 
 FFMPEG_PATH = r"C:\Users\sebastiancr\Downloads\ffmpeg-9.0.1-essentials_build\ffmpeg-9.0.1-essentials_build\bin\ffmpeg.exe"
 
-
 FRAME_FOLDER = r"C:\output\videos"
 
 OUTPUT_VIDEO = r"output/videos/autostudio_short.mp4"
