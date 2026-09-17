@@ -308,9 +308,22 @@ def pipeline(settings):
 
 
 
-    log(
-        "Preparing uploader..."
-    )
+    log("Uploading to YouTube...")
+
+
+from uploader.youtube_upload import upload_video
+
+
+upload_video(
+
+    script["title"],
+
+    script["description"]
+
+)
+
+
+log("Upload complete")
 
 
     if settings["youtube"]["enabled"]:
