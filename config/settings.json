@@ -5,17 +5,24 @@
 
     "ffmpeg_path": "",
 
-    "youtube_upload": false,
 
-    "video_type": "youtube_shorts",
+    "video": {
 
-    "style": "3D animated science documentary",
+        "fps": 30,
 
-    "target_length_seconds": 45,
+        "frames": 150,
 
-    "fps": 30,
+        "resolution": "360x640"
 
-    "resolution_x": 1080,
+    },
 
-    "resolution_y": 1920
+
+    "youtube": {
+
+        "enabled": false,
+
+        "privacy": "private"
+
+    }
+
 }
