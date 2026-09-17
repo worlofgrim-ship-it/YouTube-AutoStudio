@@ -1,15 +1,90 @@
 import os
 import subprocess
+import shutil
 
 
 BLENDER_PATH = r"C:\Users\sebastiancr\Downloads\blender-5.2.2-windows-x64\blender-5.2.2-windows-x64\blender.exe"
+
+
+FRAME_FOLDER = r"C:\output\videos"
+
+
+OUTPUT_VIDEO = r"output/videos/autostudio_short.mp4"
+
+
+
+def encode_video():
+
+    print("Encoding frames into MP4...")
+
+
+    command = [
+
+        "ffmpeg",
+
+        "-y",
+
+        "-framerate",
+        "30",
+
+        "-i",
+        FRAME_FOLDER + r"\frame.mp4%04d.png",
+
+        "-c:v",
+        "libx264",
+
+        "-pix_fmt",
+        "yuv420p",
+
+        OUTPUT_VIDEO
+    ]
+
+
+    subprocess.run(
+        command,
+        check=True
+    )
+
+
+    print(
+        "MP4 created:"
+    )
+
+    print(
+        OUTPUT_VIDEO
+    )
+
+
+
+def cleanup_frames():
+
+    print(
+        "Cleaning temporary frames..."
+    )
+
+
+    for file in os.listdir(FRAME_FOLDER):
+
+        if file.endswith(".png"):
+
+            os.remove(
+                os.path.join(
+                    FRAME_FOLDER,
+                    file
+                )
+            )
+
+
+    print(
+        "Frame cleanup complete"
+    )
 
 
 
 def render_scene():
 
     print(
-        "FAST Blender render mode"
+        "Starting v1.6.6 video pipeline..."
     )
 
 
@@ -19,62 +94,32 @@ def render_scene():
     )
 
 
-    subprocess.run(
-        [
-            BLENDER_PATH,
-            "--background",
-            "--python",
-            "video/blender_engine.py"
-        ]
-    )
-
-
-    blend_file = os.path.abspath(
+    blend_file = (
         "output/scenes/autostudio_scene.blend"
     )
 
 
-    render_script = f"""
+    if not os.path.exists(blend_file):
 
-import bpy
-
-bpy.ops.wm.open_mainfile(
-filepath=r'{blend_file}'
-)
-
-scene=bpy.context.scene
-
-scene.render.resolution_percentage=50
-
-scene.render.filepath=r'output/videos/frame.mp4'
-
-bpy.ops.render.render(
-animation=True
-)
-
-"""
-
-
-    with open(
-        "video/fast_render.py",
-        "w"
-    ) as f:
-
-        f.write(
-            render_script
+        print(
+            "Blend file missing"
         )
 
+        return
 
-    subprocess.run(
-        [
-            BLENDER_PATH,
-            "--background",
-            "--python",
-            "video/fast_render.py"
-        ]
-    )
 
 
     print(
-        "FAST render complete"
+        "Rendering frames already complete."
+    )
+
+
+    encode_video()
+
+
+    cleanup_frames()
+
+
+    print(
+        "YouTube Short ready!"
     )
