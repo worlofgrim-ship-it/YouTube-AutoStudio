@@ -1,64 +1,101 @@
 import os
 import json
+import datetime
 
 
 PROJECT_NAME = "YouTube-AutoStudio"
+SETTINGS_FILE = "config/settings.json"
+
 
 
 def log(message):
+
     print(message)
+
+    os.makedirs("logs", exist_ok=True)
+
+    with open(
+        "logs/latest.log",
+        "a",
+        encoding="utf-8"
+    ) as file:
+
+        file.write(
+            f"[{datetime.datetime.now()}] {message}\n"
+        )
+
 
 
 def create_folders():
 
     folders = [
+
         "output/videos",
         "output/scripts",
         "output/thumbnails",
         "output/scenes",
+        "output/audio",
+
         "logs",
+
         "config"
+
     ]
 
+
     for folder in folders:
-        os.makedirs(folder, exist_ok=True)
 
-    log("Folder structure verified")
-
-
-
-def load_settings():
-
-    path = "config/settings.json"
-
-    if os.path.exists(path):
-
-        with open(
-            path,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
-            settings = json.load(file)
-
-        log("Settings loaded")
-
-        return settings
+        os.makedirs(
+            folder,
+            exist_ok=True
+        )
 
 
-    settings = {
-        "channel_name": "Nundas"
-    }
-
-
-    os.makedirs(
-        "config",
-        exist_ok=True
+    log(
+        "Folder structure verified"
     )
 
 
+
+def first_time_setup():
+
+    print("\nFirst time setup\n")
+
+
+    channel = input(
+        "Channel name: "
+    )
+
+
+    blender = input(
+        "Blender executable path: "
+    )
+
+
+    ffmpeg = input(
+        "FFmpeg executable path: "
+    )
+
+
+    settings = {
+
+        "channel_name": channel,
+
+        "blender_path": blender,
+
+        "ffmpeg_path": ffmpeg,
+
+        "youtube_upload": False,
+
+        "fps":30,
+
+        "resolution":"360x640"
+
+    }
+
+
     with open(
-        path,
+        SETTINGS_FILE,
         "w",
         encoding="utf-8"
     ) as file:
@@ -70,46 +107,126 @@ def load_settings():
         )
 
 
+    print(
+        "Setup complete!"
+    )
+
+
     return settings
 
 
 
-def pipeline():
 
-    from ideas.trend_finder import find_topic
-    from script.generator import generate_script
-    from voice.tts import create_voice
-    from thumbnail.generator import create_thumbnail
-    from video.blender_render import render_scene
+def load_settings():
 
-
-    log("Finding video idea...")
-
-
-    topic = find_topic()
-
-
-    log(
-        "Topic found: " + topic
+    os.makedirs(
+        "config",
+        exist_ok=True
     )
 
 
-    log("Generating script...")
+    if not os.path.exists(
+        SETTINGS_FILE
+    ):
+
+        return first_time_setup()
 
 
-    script = generate_script(topic)
+
+    with open(
+        SETTINGS_FILE,
+        "r",
+        encoding="utf-8"
+    ) as file:
+
+        settings=json.load(file)
 
 
-    log("AI script generated")
+
+    log(
+        "Settings loaded"
+    )
 
 
-    log("Creating voice...")
+    return settings
 
 
-    create_voice(topic)
 
 
-    log("Creating thumbnail...")
+def pipeline(settings):
+
+
+    try:
+
+        from ideas.trend_finder import find_topic
+
+        from script.generator import generate_script
+
+        from voice.tts import create_voice
+
+        from thumbnail.generator import create_thumbnail
+
+        from video.blender_render import render_scene
+
+
+
+    except Exception as error:
+
+        log(
+            "Module error: "
+            + str(error)
+        )
+
+        return
+
+
+
+
+    log(
+        "Finding video idea..."
+    )
+
+
+    topic=find_topic()
+
+
+    log(
+        "Topic: "
+        + topic
+    )
+
+
+
+    log(
+        "Generating script..."
+    )
+
+
+    script=generate_script(
+        topic
+    )
+
+
+    log(
+        "Script generated"
+    )
+
+
+
+    log(
+        "Creating voice..."
+    )
+
+
+    create_voice(
+        script
+    )
+
+
+
+    log(
+        "Creating thumbnail..."
+    )
 
 
     create_thumbnail(
@@ -117,48 +234,65 @@ def pipeline():
     )
 
 
-    log("Starting Blender renderer...")
+
+    log(
+        "Starting Blender..."
+    )
 
 
-    try:
+    render_scene(
+        settings
+    )
 
-        render_scene()
+
+    log(
+        "Video render finished"
+    )
+
+
+
+    if settings.get(
+        "youtube_upload"
+    ):
 
         log(
-            "Blender render complete"
+            "Uploading to YouTube..."
+        )
+
+        from youtube.uploader import upload_video
+
+        upload_video(
+            "output/videos/autostudio_short.mp4",
+            topic
         )
 
 
-    except Exception as error:
 
-        log(
-            "Blender failed: " + str(error)
-        )
-
-
-    log("Preparing uploader...")
+    log(
+        "ALL COMPLETE"
+    )
 
 
-    log("Preparing analytics...")
-
-
-    log("Pipeline complete")
 
 
 
 def main():
 
-    print("=" * 40)
+
+    print("="*40)
 
     print(PROJECT_NAME)
 
-    print("=" * 40)
+    print("="*40)
+
 
 
     create_folders()
 
 
-    settings = load_settings()
+
+    settings=load_settings()
+
 
 
     log(
@@ -167,9 +301,14 @@ def main():
     )
 
 
-    pipeline()
+
+    pipeline(
+        settings
+    )
 
 
 
-if __name__ == "__main__":
+
+if __name__=="__main__":
+
     main()
