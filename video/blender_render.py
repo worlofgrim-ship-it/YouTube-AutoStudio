@@ -142,7 +142,7 @@ def cleanup():
 
 
 
-def render_scene():
+def render_scene(settings=None):
 
     print(
         "Starting v1.6.6.1 full pipeline..."
