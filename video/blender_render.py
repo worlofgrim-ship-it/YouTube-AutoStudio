@@ -1,163 +1,72 @@
 import os
 import subprocess
-
-
-BLENDER_PATH = r"C:\Users\sebastiancr\Downloads\blender-5.2.2-windows-x64\blender-5.2.2-windows-x64\blender.exe"
-
-FFMPEG_PATH = r"C:\Users\sebastiancr\Downloads\ffmpeg-9.0.1-essentials_build\ffmpeg-9.0.1-essentials_build\bin\ffmpeg.exe"
-
-FRAME_FOLDER = r"C:\output\videos"
-
-OUTPUT_VIDEO = r"output/videos/autostudio_short.mp4"
+import json
 
 
 
-def run_blender(script):
-
-    subprocess.run(
-        [
-            BLENDER_PATH,
-            "--background",
-            "--python",
-            script
-        ],
-        check=True
-    )
-
-
-
-def create_scene():
-
-    print(
-        "Generating Blender scene..."
-    )
-
-    run_blender(
-        "video/blender_engine.py"
-    )
-
-
-
-def render_frames():
-
-    print(
-        "Rendering frames..."
-    )
-
-
-    blend_file = os.path.abspath(
-        "output/scenes/autostudio_scene.blend"
-    )
-
-
-    render_script = f"""
-
-import bpy
-
-bpy.ops.wm.open_mainfile(
-filepath=r'{blend_file}'
-)
-
-bpy.context.scene.render.filepath=r'C:/output/videos/frame.mp4'
-
-bpy.ops.render.render(
-animation=True
-)
-
-"""
-
+def load_settings():
 
     with open(
-        "video/render_animation.py",
-        "w"
+        "config/settings.json",
+        "r",
+        encoding="utf-8"
     ) as f:
 
-        f.write(render_script)
-
-
-
-    run_blender(
-        "video/render_animation.py"
-    )
-
-
-
-def encode_video():
-
-    print(
-        "Encoding MP4..."
-    )
-
-
-    subprocess.run(
-        [
-
-            FFMPEG_PATH,
-
-            "-y",
-
-            "-framerate",
-            "30",
-
-            "-i",
-            FRAME_FOLDER + r"\frame.mp4%04d.png",
-
-            "-c:v",
-            "libx264",
-
-            "-pix_fmt",
-            "yuv420p",
-
-            OUTPUT_VIDEO
-
-        ],
-        check=True
-    )
-
-
-
-    print(
-        "MP4 created"
-    )
-
-
-
-def cleanup():
-
-    print(
-        "Cleaning frames..."
-    )
-
-
-    for file in os.listdir(FRAME_FOLDER):
-
-        if file.endswith(".png"):
-
-            os.remove(
-                os.path.join(
-                    FRAME_FOLDER,
-                    file
-                )
-            )
+        return json.load(f)
 
 
 
 def render_scene(settings=None):
 
-    print(
-        "Starting v1.6.6.1 full pipeline..."
+
+    if settings is None:
+
+        settings = load_settings()
+
+
+
+    blender = settings[
+        "blender_path"
+    ]
+
+
+    scene = (
+        "output/scenes/"
+        "autostudio_scene.blend"
     )
 
 
-    create_scene()
+    if not os.path.exists(scene):
 
-    render_frames()
+        raise Exception(
+            "Blend file missing"
+        )
 
-    encode_video()
 
-    cleanup()
+    command = [
+
+        blender,
+
+        "--background",
+
+        scene,
+
+        "--render-animation"
+
+    ]
 
 
     print(
-        "YouTube Short finished!"
+        "Starting Blender render..."
+    )
+
+
+    subprocess.run(
+        command,
+        check=True
+    )
+
+
+    print(
+        "Render finished"
     )
