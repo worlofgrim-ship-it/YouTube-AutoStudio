@@ -1,28 +1,21 @@
 {
     "channel_name": "Nundas",
-
-    "blender_path": "",
-
-    "ffmpeg_path": "",
-
-
-    "video": {
-
-        "fps": 30,
-
-        "frames": 150,
-
-        "resolution": "360x640"
-
-    },
-
-
     "youtube": {
-
-        "enabled": true,
-
         "privacy": "private"
-
+    },
+    "paths": {
+        "blender": "C:\\Users\\sebastiancr\\Downloads\\blender-5.2.2-windows-x64\\blender-5.2.2-windows-x64\\blender.exe",
+        "ffmpeg": "C:\\Users\\sebastiancr\\Downloads\\ffmpeg-9.0.1-essentials_build\\ffmpeg-9.0.1-essentials_build\\bin\\ffmpeg.exe"
+    },
+    "render": {
+        "resolution_x": 720,
+        "resolution_y": 1280,
+        "resolution_percentage": 50,
+        "fps": 30,
+        "frame_count": 150,
+        "engine": "EEVEE"
+    },
+    "voice": {
+        "voice": "en-US-GuyNeural"
     }
-
 }
